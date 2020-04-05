@@ -11,7 +11,7 @@ int carY = 33;
 void setup() {
   
     arduboy.begin();
-    arduboy.setFrameRate(30);
+    arduboy.setFrameRate(60);
     arduboy.initRandomSeed();
     
 }
@@ -25,21 +25,37 @@ void loop() {
     // Controlling ..
 
     if (arduboy.pressed(UP_BUTTON)) {
-        frogY = frogY -1;
+        frogY = frogY - 1;
     }
     if (arduboy.pressed(DOWN_BUTTON) && frogY<58) {
-        frogY = frogY +1;
+        frogY = frogY + 1;
     }
     if (arduboy.pressed(RIGHT_BUTTON)) {
-        frogX = frogX +1;
+        frogX = frogX + 1;
     }
     if (arduboy.pressed(LEFT_BUTTON)) {
-        frogX = frogX -1;
+        frogX = frogX - 1;
+    }
+
+
+    // Updating the car ..
+
+    carX = carX - 1;
+    if(carX< -20){carX = 130;}
+
+
+    // Look for collision ..
+
+    Rect frogRect = { frogX, frogY, 4, 5};
+    Rect carRect = { carX, carY, 10, 6};
+
+    if (arduboy.collide(frogRect, carRect)) {
+
+        arduboy.print("DEAD !");
     }
 
 
 
-    carX = 
 
     // Drawing ..
     arduboy.drawLine(0,57,127,57);
@@ -55,7 +71,7 @@ void loop() {
 
 
     Sprites::drawSelfMasked(frogX, frogY, Frog, 0);
-       Sprites::drawSelfMasked(carX, carY, Car1, 0);
+    Sprites::drawSelfMasked(carX, carY, Car1, 0);
     arduboy.display();
     
 }
