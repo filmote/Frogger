@@ -1,7 +1,9 @@
 #include <Arduboy2.h>
-#include "Images.h"
+#include "src/images/Images.h"
+#include "src/fonts/Font3x5.h"
 
 Arduboy2 arduboy;
+Font3x5 font3x5 = Font3x5();
 
 struct Car {
     int x;
@@ -20,6 +22,7 @@ Car car3;
 Car car4;
 Car car5;
 Car car6;
+
 void setup() {
   
     arduboy.begin();
@@ -27,27 +30,27 @@ void setup() {
     arduboy.initRandomSeed();
     
     car1.x = 130;
-    car1.y = 33;
+    car1.y = 32;
     car1.type =1;
     
     car2.x = 180;
-    car2.y = 33;
+    car2.y = 32;
     car2.type =2;
 
     car3.x = 64;
-    car3.y = 42;
+    car3.y = 41;
     car3.type =2;
     
     car4.x = 110;
-    car4.y = 42;
+    car4.y = 41;
     car4.type =3;
 
     car5.x = 45;
-    car5.y =51;
+    car5.y = 50;
     car5.type = 1;
 
     car6.x = 70;
-    car6.y = 51;
+    car6.y = 50;
     car6.type = 3;
 }   
 
@@ -139,14 +142,15 @@ void loop() {
     }
 
     // Drawing ..
-    arduboy.drawLine(0,58,127,58);
-    arduboy.drawLine(0,31,127,31);
-    arduboy.drawLine(0,27,127,27);
+
+    arduboy.drawLine(0,26,127,26);
+    arduboy.drawLine(0,30,127,30);
+    arduboy.drawLine(0,57,127,57);
 
     for (int x = 8; x < 128; x = x + 12) {
 
-        arduboy.drawLine(x,40, x + 4, 40);
-        arduboy.drawLine(x,49, x + 4, 49);
+        arduboy.drawLine(x, 39, x + 4, 39);
+        arduboy.drawLine(x, 48, x + 4, 48);
 
     }
 
@@ -160,6 +164,11 @@ void loop() {
     drawCar(car4);
     drawCar(car5);
     drawCar(car6);
+
+    font3x5.setCursor(0, 58);
+    font3x5.print("SCORE:0000");
+    font3x5.setCursor(93, 58);
+    font3x5.print("HIGH:0000");
 
     arduboy.display();
     
