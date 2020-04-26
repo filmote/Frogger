@@ -101,7 +101,7 @@ void loop() {
 
     if ( !arduboy.nextFrame() ) return;
     arduboy.clear();
-    frameCount = frameCount + 1;\
+    frameCount = frameCount + 1;
     
 
     // Update delays ..
@@ -130,7 +130,8 @@ void loop() {
     }
     
 
-    // Updating the car ..
+    // -------------------------------------------------
+    //  Update the cars ..
 
     if (frameCount % 2 == 0) {
 
@@ -145,40 +146,44 @@ void loop() {
 
     }
 
-    if(car1.x< - 20) { launchCar(car1, car2); }
-    if(car2.x< - 20) { launchCar(car2, car1); }
+    if (car1.x< - 20) { launchCar(car1, car2); }
+    if (car2.x< - 20) { launchCar(car2, car1); }
 
     car3.x = car3.x - 1;
-    if(car3.x< - 20) { launchCar(car3, car4);;}
+    if (car3.x< - 20) { launchCar(car3, car4);;}
 
     car4.x = car4.x - 1;
-    if(car4.x< - 20) { launchCar(car4, car3);;}
+    if (car4.x< - 20) { launchCar(car4, car3);;}
 
     if (frameCount % 2 == 0) {
         
         car5.x = car5.x - 1;
-        if(car5.x< - 20) { launchCar(car5, car6); }
+        if (car5.x< - 20) { launchCar(car5, car6); }
 
         car6.x = car6.x - 1;
-        if(car6.x< - 20) { launchCar(car6, car5); }
+        if (car6.x< - 20) { launchCar(car6, car5); }
     }
-    
+
+
     log1.x=log1.x-1;
-    if(log1.x<-25) { launchLog(log1,log2); }
+    if (log1.x<-25) { launchLog(log1,log2); }
     log2.x=log2.x-1;
-    if(log2.x<-25) { launchLog(log2,log1);}
+    if (log2.x<-25) { launchLog(log2,log1);}
+
+    log3.x=log3.x+1;
+    if (log3.x >128) { launchLogRev(log3,log4); }
+    log4.x=log4.x+1;
+    if (log4.x >128) { launchLogRev(log4,log3);}
 
     if (frameCount % 2 == 0) {
+
         log5.x=log5.x-1;
-        if(log5.x<-25) { launchLog(log5,log6); }
+        if (log5.x<-25) { launchLog(log5,log6); }
         log6.x=log6.x-1;
-        if(log6.x<-25) { launchLog(log6,log5);}
+        if (log6.x<-25) { launchLog(log6,log5);}
     }
-        log3.x=log3.x+1;
-    if(log3.x >128) { launchLogRev(log3,log4); }
-    log4.x=log4.x+1;
-    if(log4.x >128) { launchLogRev(log4,log3);}
     
+
     // Look for collision ..
 
     if (carCrash(car1)) {
@@ -208,6 +213,7 @@ void loop() {
 
         arduboy.print("DEAD ! 6");
     }
+
 
     // Drawing ..
 
