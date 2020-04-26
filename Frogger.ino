@@ -5,10 +5,22 @@
 Arduboy2 arduboy;
 Font3x5 font3x5 = Font3x5();
 
-struct Car {
+struct Object {
+
     int x;
     int y;
     int type;
+    int delay;
+    int turtleimage; // 1 full .. 4 underwater
+
+    void decreaseDelay() {
+
+        if (delay > 0) {
+            delay = delay - 1;
+        }
+
+    }
+
 };
 
 int frameCount = 0;
@@ -16,12 +28,18 @@ int frameCount = 0;
 int frogX = 62;
 int frogY = 58;
 
-Car car1;
-Car car2;
-Car car3;
-Car car4;
-Car car5;
-Car car6;
+Object car1;
+Object car2;
+Object car3;
+Object car4;
+Object car5;
+Object car6;
+Object log1;
+Object log2;
+Object log5;
+Object log6;
+Object log4;
+Object log3; 
 
 void setup() {
   
@@ -52,6 +70,30 @@ void setup() {
     car6.x = 70;
     car6.y = 50;
     car6.type = 3;
+
+    log1.x = 75;
+    log1.y = 5; 
+    log1.type =0;
+
+    log2.x = 25;
+    log2.y = 5; 
+    log2.type =0;
+
+    log3.x = 31;
+    log3.y = 12;
+    log3.type =0;   
+
+    log4.x = 5;
+    log4.y = 12;
+    log4.type =0;
+
+    log5.x = 42;
+    log5.y = 19;
+    log5.type =0;
+
+    log6.x = 70;
+    log6.y = 19;
+    log6.type =0;
 }   
 
 
@@ -59,7 +101,17 @@ void loop() {
 
     if ( !arduboy.nextFrame() ) return;
     arduboy.clear();
-    frameCount = frameCount + 1;
+    frameCount = frameCount + 1;\
+    
+
+    // Update delays ..
+
+    log1.decreaseDelay();
+    log2.decreaseDelay();
+    log3.decreaseDelay();
+    log4.decreaseDelay();
+    log5.decreaseDelay();
+    log6.decreaseDelay();
 
 
     // Controlling ..
@@ -110,7 +162,23 @@ void loop() {
         car6.x = car6.x - 1;
         if(car6.x< - 20) { launchCar(car6, car5); }
     }
+    
+    log1.x=log1.x-1;
+    if(log1.x<-25) { launchLog(log1,log2); }
+    log2.x=log2.x-1;
+    if(log2.x<-25) { launchLog(log2,log1);}
 
+    if (frameCount % 2 == 0) {
+        log5.x=log5.x-1;
+        if(log5.x<-25) { launchLog(log5,log6); }
+        log6.x=log6.x-1;
+        if(log6.x<-25) { launchLog(log6,log5);}
+    }
+        log3.x=log3.x+1;
+    if(log3.x >128) { launchLogRev(log3,log4); }
+    log4.x=log4.x+1;
+    if(log4.x >128) { launchLogRev(log4,log3);}
+    
     // Look for collision ..
 
     if (carCrash(car1)) {
@@ -164,6 +232,12 @@ void loop() {
     drawCar(car4);
     drawCar(car5);
     drawCar(car6);
+    drawLog(log1);
+    drawLog(log2);
+    drawLog(log5);
+    drawLog(log6);
+    drawLog(log3);
+    drawLog(log4);
 
     font3x5.setCursor(0, 58);
     font3x5.print("SCORE:0000");
@@ -174,7 +248,56 @@ void loop() {
     
 }
 
-void drawCar(Car car) {
+void drawLog(Object fred) {
+
+    if (fred.type == 0) {
+
+        Sprites::drawSelfMasked(fred.x, fred.y, Log, 0);
+
+    }
+    else {
+
+        switch (fred.delay) {
+
+            case 40 ... 200:
+                Sprites::drawSelfMasked(fred.x, fred.y, Turtle1, 0);
+                break;
+            
+            case 35 ... 39:
+                Sprites::drawSelfMasked(fred.x, fred.y, Turtle2, 0);
+                break;
+            
+            case 30 ... 34:
+                Sprites::drawSelfMasked(fred.x, fred.y, Turtle3, 0);
+                break;
+            
+            case 15 ... 29:
+                break;
+            
+            case 10 ... 14:
+                Sprites::drawSelfMasked(fred.x, fred.y, Turtle3, 0);
+                break;
+            
+            case 5 ... 9:
+                Sprites::drawSelfMasked(fred.x, fred.y, Turtle2, 0);
+                break;
+
+            case 1 ... 4:
+                Sprites::drawSelfMasked(fred.x, fred.y, Turtle1, 0);
+                break;
+
+            case 0:
+                Sprites::drawSelfMasked(fred.x, fred.y, Turtle1, 0);
+                fred.delay= random(50,100);
+                break;
+
+        }
+
+    }
+
+}
+
+void drawCar(Object car) {
 
     if (car.type == 1) {
 
@@ -197,10 +320,10 @@ void drawCar(Car car) {
 
 }
 
-bool carCrash(Car car) {
+bool carCrash(Object car) {
 
-    Rect frogRect = { frogX, frogY, 4, 5};
-    Rect carRect = { car.x, car.y, 17, 6};
+    Rect frogRect = { frogX, frogY, 4, 5 };
+    Rect carRect = { car.x, car.y, 17, 6 };
 
     if (car.type = 1) {
         carRect.width = 10;
@@ -219,17 +342,52 @@ bool carCrash(Car car) {
 
 }
 
-void launchCar(Car &car, Car otherCar) {
+void launchCar(Object &car, Object otherCar) {
 
     if (otherCar.x > 110) {
 
-        car.x = random(otherCar.x + 20, otherCar.x + 60);
+        car.x = random(otherCar.x + 20, otherCar.x + 70);
 
     }
     else {
 
-        car.x = random(130, 170);
+        car.x = random(130, 180);
 
     }
+
+}
+
+
+void launchLog(Object &log, Object otherLog) {
+
+    if (otherLog.x > 110) {
+
+        log.x = random(otherLog.x + 35, otherLog.x + 70);
+
+    }
+    else {
+
+        log.x = random(130, 180);
+
+    }
+    log.type = random(0,2);
+    log.turtleimage=1;
+    log.delay= random(50,100);
+}
+void launchLogRev(Object &log, Object otherLog) {
+
+    if (otherLog.x <0) {
+
+        log.x = random(otherLog.x - 70, otherLog.x -35);
+
+    }
+    else {
+
+        log.x = random(-70, -25);
+
+    }
+    log.type = random(0,2);
+    log.turtleimage=1;
+    log.delay= random(50,100);
 
 }
